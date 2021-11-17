@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_ecf3c911_294b_4993_96f0_1d8c7fd5aa53_Input_Payload = Array<{|  userName: String,   wquantity: Number,   userEmail: String,   wprice: Number,   quantity: Number,   price: Number,   itemName: String|}>
+

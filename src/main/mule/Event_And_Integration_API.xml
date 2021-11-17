@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:s3="http://www.mulesoft.org/schema/mule/s3" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<flow name="FlatToJsonConverter" doc:id="dd7c8eb5-d7ae-41bc-9f3a-cf5c5129bd7a" initialState="started">
+		<http:listener doc:name="/ffd" doc:id="934ba52b-a971-43a7-8433-d6e228ff0d0c" config-ref="HTTP_Listener_config" path="/ffd" allowedMethods="POST"/>
+		<set-payload value="#[payload]" doc:name="Set FFD File" doc:id="42929b4d-fa55-40a4-9514-de2f6f02e1bc" mimeType='application/flatfile; schemapath="schemas/Hospital.ffd"' />
+		<ee:transform doc:name="FlatFileTo JSON" doc:id="376ec9b3-f9c4-4b38-9307-804bf3e54478" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	User_ID : payload01.USERID default "",
+	Name: payload01.NAME default "",
+	Street: payload01.STREET default "",
+	PhoneNumber: payload01.PHONENUMBER default "",
+	Country: payload01.COUNTRY default "",
+	Postalcode : payload01.POSTALCODE default "",
+
+
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="7713433a-9843-45de-99a0-0b93d7cde805" message="#[payload]"/>
+	</flow>
+	<flow name="AWSStoSalesforce" doc:id="193ee86f-30d0-4c87-8127-f972385b1692">
+		<scheduler doc:name="AWSToSalesforce_Scheduler" doc:id="ebb1768a-56ab-45da-ac77-19690f123df0" >
+			<scheduling-strategy >
+				<cron expression="0 43 05 ? * *" timeZone="America/Los_Angeles" />
+			</scheduling-strategy>
+		</scheduler>
+		<s3:get-object doc:name="Get AWS Accounts object" doc:id="cdb12fc6-46e9-476d-a975-1c1e1f17fe01" config-ref="Amazon_S3_Configuration" bucketName="ecommercebatch39" key="accounts.txt" >
+			<error-mapping sourceType="S3:NO_SUCH_KEY" targetType="APP:NO_SUCH_KEY" />
+			<error-mapping sourceType="S3:INVALID_ACCESS_KEY_ID" targetType="APP:INVALID_ACCESS_KEY_ID" />
+			<error-mapping sourceType="S3:SIGNATURE_DOES_NOT_MATCH" targetType="APP:SIGNATURE_DOES_NOT_MATCH" />
+		</s3:get-object>
+		<http:request method="POST" doc:name="Request Transform Flow" doc:id="942875b4-71d6-4677-8cd8-383620cc759c" config-ref="HTTP_Request_configuration" path="/ffd" outputMimeType="application/json" responseTimeout="100000" />
+		<ee:transform doc:name="Transform Message" doc:id="4555c292-6325-4338-bad4-d4527fd24ea6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	Name: payload01.Name,
+	BillingStreet: payload01.Street,
+	BillingPostalCode: payload01.Postalcode,
+	BillingCountry: payload01.Country,
+	Phone: payload01.PhoneNumber,
+	User_ID__c: payload01.User_ID
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:upsert objectType="Account" externalIdFieldName="User_ID__c" doc:name="Upsert" doc:id="36f9fa12-f08d-4262-be27-308e8c7d9d08" config-ref="Salesforce_Config" >
+		</salesforce:upsert>
+		<logger level="INFO" doc:name="Logger" doc:id="f5183bbb-4ddc-469c-bae2-b356f550602d" message="#[payload]" />
+	</flow>
+	<flow name="AWStoDB" doc:id="78ae0eff-74ec-48d3-8b39-b68e3f5f9ee2">
+		<scheduler doc:name="AWSToDB_Scheduler" doc:id="435e8385-ee93-46c5-8487-3fd46c5e12a6" >
+			<scheduling-strategy >
+				<cron expression="0 43 05 ? * *" timeZone="America/Los_Angeles" />
+			</scheduling-strategy>
+		</scheduler>
+		<s3:get-object doc:name="Get AWS inventory object" doc:id="282aaaf2-8045-489d-93b8-d0fd84d8d958" config-ref="Amazon_S3_Configuration" bucketName="ecommercebatch39" key="inventory.csv">
+			<error-mapping sourceType="S3:NO_SUCH_KEY" targetType="APP:NO_SUCH_KEY" />
+			<error-mapping sourceType="S3:INVALID_ACCESS_KEY_ID" targetType="APP:INVALID_ACCESS_KEY_ID" />
+			<error-mapping sourceType="S3:SIGNATURE_DOES_NOT_MATCH" targetType="APP:SIGNATURE_DOES_NOT_MATCH" />
+		</s3:get-object>
+		<ee:transform doc:name="CSV TO JSON" doc:id="563259f1-a71b-4ac7-887c-6c06eeaa3941" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b86729ad-7d89-4515-945c-a3106eccb388" message="#[payload]"/>
+		<batch:job jobName="OracleBatch_Job" doc:id="5551d4ca-e174-4ea9-bc67-c2d11a925e3d">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="cb4fe06a-313f-471f-8fc4-605a4d84087d">
+					<db:select doc:name="Select" doc:id="38fb14cb-2143-4e8c-b307-a153ca0e3d4c" config-ref="Database_Config" target="dupe " targetValue="#[sizeOf(payload)  &gt; 0]">
+			<db:sql><![CDATA[SELECT itemId FROM inventory WHERE itemId = ':item_Id']]></db:sql>
+						<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	"item_Id" : payload.itemId default "" as String
+	
+}]]]></db:input-parameters>
+		</db:select>
+					<logger level="INFO" doc:name="Logger" doc:id="2c11d70a-934a-40d3-a40e-e68ccf460044" message="#[payload]"/>
+				</batch:step>
+				<batch:step name="Batch_Step1" doc:id="ca1a3269-e0a5-4d3c-8a3a-cdc47c860048" acceptExpression="#[not vars.dupe]">
+					<db:insert doc:name="Insert" doc:id="c5474ee2-6e7c-489c-87c5-6b897417759e" config-ref="Database_Config">
+						<db:sql><![CDATA[INSERT INTO inventory VALUES(:itemId,:itemName,:quantity,:price)]]></db:sql>
+						<db:input-parameters><![CDATA[#[{
+"itemId" : payload.itemId,
+"itemName" : payload.itemName,
+"quantity" : payload.quantity,
+"price" : payload.price
+
+}]]]></db:input-parameters>
+					</db:insert>
+					<logger level="INFO" doc:name="Logger" doc:id="5f2dff27-7d01-4692-938a-44314ba7734a" message="#[payload]" />
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="5c68d7c3-9f9b-482f-b318-c8e28533eb63" message="#[payload]"/>
+			</batch:on-complete>
+		</batch:job>
+		<logger level="INFO" doc:name="Logger" doc:id="47b07951-1a08-4a3f-82c8-03a2c2f12ec3" message="#[payload]"/>
+		<error-handler ref="globalError_Handler" />
+	</flow>
+	<flow name="EventAPI" doc:id="bf37641e-f999-4d17-8392-7ca749f3ef96" >
+		<scheduler doc:name="Scheduler" doc:id="73bae54a-471d-4ecb-987e-491ff2d8baea" >
+			<scheduling-strategy >
+				<cron expression="0 43 05 ? * *" timeZone="America/Los_Angeles" />
+			</scheduling-strategy>
+		</scheduler>
+		<db:select doc:name="getWishlistdata" doc:id="20d9918a-849d-422b-9e97-614ff617f3e4" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT w.userName,w.quantity AS wquantity,w.userEmail,w.price AS wprice,i.quantity,i.price,i.itemName FROM wishlist w INNER JOIN inventory i ON w.itemId = i.itemId]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="7a566bf3-fd33-4493-916c-dd21220ea0d1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	userName: payload01.userName,
+	wquantity: payload01.wquantity,
+	userEmail: payload01.userEmail,
+	wprice: payload01.wprice,
+	quantity: payload01.quantity,
+	price: payload01.price,
+	itemName: payload01.itemName
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="4b66b4fa-4bc8-46c7-b925-e13e7369c2ef" >
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="2aa3cc10-7267-44f4-a76b-21eaacfd666d" name="PriceAPI"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="8d7bd0f1-72a0-413d-aa0f-dadb5d244d6d" name="quantityAPI2"/>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="90ff1e44-48ec-4ccf-9840-1b12a94e4865" message="#[payload]"/>
+		<error-handler ref="globalError_Handler" />
+	</flow>
+	<flow name="PriceAPI" doc:id="ecf3c911-294b-4993-96f0-1d8c7fd5aa53" >
+		<foreach doc:name="For Each" doc:id="06d2c06c-a525-4d2f-b3ed-286b58fd595c" collection="#[payload]" >
+			<choice doc:name="Choice" doc:id="03a35a49-42b9-42d4-99c8-107d1a18b7d9" >
+				<when expression="#[payload.price &gt; payload.wprice]" >
+					<email:send doc:name="SendIncreaseEmail" doc:id="2272aee0-4740-4697-bb4b-b40e8255b086" config-ref="Email_SMTP" fromAddress="ecom.express.batch39@gmail.com" subject="Price increased for your item">
+						<email:to-addresses >
+							<email:to-address value="#[payload.userEmail]" />
+						</email:to-addresses>
+						<email:body contentType="text/plain">
+							<email:content ><![CDATA[#["Dear " ++ payload.userName ++ "," ++ " price increased for " ++ payload.itemName as String]]]></email:content>
+						</email:body>
+					</email:send>
+					<logger level="INFO" doc:name="Logger" doc:id="5da21a47-52a8-42b4-908f-d5cd9213387d" message='#[payload.price ++ " " ++ "price increased for " ++ payload.itemName]' />
+				</when>
+				<when expression="#[payload.price &lt; payload.wprice]" >
+					<email:send doc:name="SendDescreaseEmail" doc:id="2543e3a2-002e-482e-ac3d-9f0425a86647" config-ref="Email_SMTP" fromAddress="ecom.express.batch39@gmail.com" subject="Price decreased for your item">
+						<email:to-addresses>
+							<email:to-address value="#[payload.userEmail]" />
+						</email:to-addresses>
+						<email:body contentType="text/plain">
+							<email:content><![CDATA[#["Dear " ++ payload.userName ++ "," ++ " price decreased for " ++ payload.itemName as String]]]></email:content>
+						</email:body>
+					</email:send>
+					<logger level="INFO" doc:name="Logger" doc:id="a8fb0b2c-6153-4684-b26a-3be8b7bb966b" message='#[payload.price ++ " " ++ "price decreased for " ++ payload.itemName]' />
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="0d8410e5-b8f8-476e-a48b-78e68056b4b2" message='#["message : Price same for "  ++ payload.itemName]' />
+				</otherwise>
+			</choice>
+		</foreach>
+	</flow>
+	<sub-flow name="quantityAPI2" doc:id="511fc9e1-ab5a-4a37-9a6f-178aa1e5b8a3" >
+		<foreach doc:name="For Each" doc:id="83193432-bd38-4287-9ded-0124aa056931" collection="#[payload]" >
+			<choice doc:name="Choice" doc:id="1102d963-9744-4ba1-9a2d-bbdaecc6f4f7" >
+				<when expression="#[payload.quantity == payload.wquantity]" >
+					<logger level="INFO" doc:name="Logger" doc:id="d5c61402-f5fe-4cdf-8fe7-c5dc1d566c22" message="quantity does not changed" />
+				</when>
+				<when expression="#[payload.quantity == 0]" >
+					<email:send doc:name="SendOutOfStockEmail" doc:id="ba7a4b2b-4d3a-4a75-ba6a-4e03b56d8b6a" config-ref="Email_SMTP" fromAddress="ecom.express.batch39@gmail.com" subject="Item is out of stock" >
+						<email:to-addresses >
+							<email:to-address value="#[payload.userEmail]" />
+						</email:to-addresses>
+						<email:body contentType="text/plain" >
+							<email:content ><![CDATA[#["Dear " ++ payload.userName ++ ","  ++ payload.itemName ++ " is out of Stock "]]]></email:content>
+						</email:body>
+					</email:send>
+					<logger level="INFO" doc:name="Logger" doc:id="584b5d8b-b75c-4fd4-a225-578b91b6eab0" message='#[payload.price ++ " " ++ "price decreased for " ++ payload.itemName]' />
+				</when>
+				<when expression="#[payload.quantity &gt; 0]" >
+					<email:send doc:name="SendItemAvailableEmail" doc:id="2333efbe-ec85-4537-be14-1bbd875bf807" config-ref="Email_SMTP" fromAddress="ecom.express.batch39@gmail.com" subject="Selected Quantity Not Available" >
+						<email:to-addresses >
+							<email:to-address value="#[payload.userEmail]" />
+						</email:to-addresses>
+						<email:body contentType="text/plain" >
+							<email:content ><![CDATA[#["Dear " ++ payload.userName ++ ","  ++ payload.itemName as String ++ " is back in Stock "]]]></email:content>
+						</email:body>
+					</email:send>
+					<logger level="INFO" doc:name="Logger" doc:id="ebdb2d61-9393-433e-9d10-be460926853a" />
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="07569e1d-52b7-4d8d-8484-4b6c86117274" message="quantity does not changed" />
+				</otherwise>
+			</choice>
+		</foreach>
+	</sub-flow>
+</mule>

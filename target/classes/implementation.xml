@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="getInventory" doc:id="130be1a0-8194-43dc-9d0f-9620aaea5510" >
+		<db:select doc:name="Select Inventory Data" doc:id="dba3609a-19e1-4055-97af-6bbd5b93df1d" config-ref="Database_Config" >
+			<db:sql ><![CDATA[SELECT * FROM inventory]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="23def224-fdac-4733-bdfe-adf1e2607540" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c4fccc33-0c41-462a-aba6-b6cc4c77cb5d" message="#[payload]" />
+	</flow>
+	<flow name="getOrder" doc:id="84200313-4dde-4cc9-a9f6-bf55a67d0798">
+		<set-variable value="#[message.attributes.queryParams.order_id]" doc:name="Set Variable" doc:id="a98fef6e-56b1-43db-a86e-2a53270aa465" variableName="id"/>
+		<db:select doc:name="Select" doc:id="84cc408f-2434-485d-878b-8fd9cd6c8439" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT order_id,user_id,item_id,price,quantity FROM order1 where order_id = :orderid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	"orderid" : vars.id as Number
+	
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="eba580ba-a88d-4915-aa07-b3e6364d5047" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+{   user_id: payload.user_id distinctBy $ ,
+	order_id: payload.order_id distinctBy $,
+	items: payload map ( payload01 , indexOfPayload01 ) -> {
+		quantity: payload01.quantity as Number default 0,
+		item_id: payload01.item_id default "",
+		price: payload01.price as Number default 0
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="d4d2a342-6683-4deb-9df0-7df6aa0d1f37" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	user_id: payload.user_id[0],
+	order_id: payload.order_id[0],
+	items: payload.items map ( item , indexOfItem ) -> {
+		quantity: item.quantity,
+		item_id: item.item_id,
+		price: item.price
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="06d5d45e-b28b-4f30-ba0d-b73b11a95226" message="#[payload]"/>
+	</flow>
+	<flow name="getWishlist" doc:id="df162fc4-0e0d-4af8-ab8c-ad99e9ffad1c" >
+		<set-variable value="#[message.attributes.queryParams.item_id]" doc:name="Set Variable" doc:id="83481ca6-a88c-4915-804d-73e35f49bed4" variableName="id" />
+		<db:select doc:name="Select" doc:id="ed239e34-9b5b-4cbd-9552-e17eed39d695" config-ref="Database_Config" >
+			<db:sql ><![CDATA[SELECT * FROM wishlistget WHERE itemId = :itemid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	"itemid" : vars.id as Number
+	
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="df68f97c-c44c-4565-b71d-e3ae1187140f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="aa301343-14ba-41a9-baa5-328c7ea423c8" message="#[payload]" />
+	</flow>
+	<flow name="getInventoryId" doc:id="1bfaecd6-e0d5-409d-860b-9c74e280587a" >
+		<set-variable value="#[message.attributes.uriParams.item_id]" doc:name="Set Variable" doc:id="21a27991-75f1-4bd2-9ee8-73d280ae90ec" variableName="id" />
+		<db:select doc:name="Select" doc:id="29a57048-fa8d-401b-aff8-11552086dfc1" config-ref="Database_Config" >
+			<db:sql ><![CDATA[SELECT * FROM inventoryget WHERE itemId = :itemid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	"itemid" : vars.id as Number
+	
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="13120dc9-16b0-4a21-9035-0b6656a4bc6b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="7460f5c6-7bc1-4f86-897b-9a17c0006106" message="#[payload]" />
+	</flow>
+	<flow name="getUserId" doc:id="2b7c22fd-28d6-40ff-a57e-17113c9dd231" >
+		<set-variable value="#[message.attributes.uriParams.user_id]" doc:name="Set Variable" doc:id="68356354-57ba-4a70-bd83-c8d147a8337a" variableName="id" />
+		<db:select doc:name="Select" doc:id="5f779d72-2c52-45f4-8033-0c4088a06ae4" config-ref="Database_Config" >
+			<db:sql ><![CDATA[SELECT * FROM userdata WHERE userId = :userid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json
+---
+{
+	"userid" : vars.id as Number
+	
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="5777402e-b527-4943-9d1d-6dcb151dfbc5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0d02be77-502b-4ded-af30-ea909b439988" message="#[payload]" />
+	</flow>
+	<flow name="postInventory" doc:id="e9fec079-5ed0-4aa8-9494-86fa5216364d" >
+		<ee:transform doc:name="Transform Message" doc:id="c09bca3c-f61f-4144-b492-edcb99251534" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"message":"Item Added (not really)"
+	}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postOrder" doc:id="917efbcb-3b35-4d2e-a90d-c738fcb8b4db" >
+		<ee:transform doc:name="Transform Message" doc:id="eae0ad82-4cc8-44a9-9729-dd5738a78b8c" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Order Added (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postUser" doc:id="773f2b3f-1d97-46da-8589-3d46c5d6f090" >
+		<ee:transform doc:name="Transform Message" doc:id="ef63226b-1583-4ff1-a2e8-87a0ed7f2c05" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "User Added (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postWishlist" doc:id="2fac6e54-7c33-49e2-9a3d-3fc66188d71b" >
+		<ee:transform doc:name="Transform Message" doc:id="6e8fda8c-f721-45ad-8492-817da326d746" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Wishlist Added(not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postPayment" doc:id="4903c4d7-250b-43d8-9f0e-e29570be847e" >
+		<ee:transform doc:name="Transform Message" doc:id="68b65fe3-2bee-4e96-bdb1-6fd93a3553c1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"message":"payment details added (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="putUser" doc:id="7c78148a-962c-4f7f-a0c0-23225b40b1a8" >
+		<ee:transform doc:name="Transform Message" doc:id="7149c8b9-79f9-4c21-9fae-6eec53678c05" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "User Updated (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="putOrder" doc:id="575e28b8-d4e1-4c89-a985-5668e7f566e9" >
+		<ee:transform doc:name="Transform Message" doc:id="d558e392-de1a-42a2-8b3d-1381caf8a4bb" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "order Updated (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="deleteUserId" doc:id="c8836b68-fd4f-448b-a561-912ce059bd6b" >
+		<ee:transform doc:name="Transform Message" doc:id="9f6caafd-455e-4885-bb31-44d452737f8d" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "User deleted (not really)"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
