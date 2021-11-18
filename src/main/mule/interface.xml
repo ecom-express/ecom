@@ -122,38 +122,50 @@ output application/json
     </flow>
     <flow name="put:\user:application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="e4c3b02f-9c78-40fd-8581-b5f396c0c335" name="putUser" />
+		<logger level="INFO" doc:name="Logger" doc:id="03f6112e-4dbe-4464-9ce3-69bc2c558e5b" />
     </flow>
     <flow name="put:\order\(order_id):application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="5fc2643f-8fb7-4a77-9cc4-3adb01069d1d" name="putOrder" />
+		<logger level="INFO" doc:name="Logger" doc:id="2408e1be-00a0-423f-9445-282489ddfdf6" />
     </flow>
     <flow name="delete:\user\(user_id):ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="d13a75e1-402f-46ad-a19e-ade6affdaa57" name="deleteUserId" />
+		<logger level="INFO" doc:name="Logger" doc:id="aaeb9b0f-93cf-4853-9e17-2f721b271b33" />
     </flow>
     <flow name="get:\inventory:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="54b88bcf-9ae9-4200-bee3-a91c039fc3e3" name="getInventory" />
+		<logger level="INFO" doc:name="Logger" doc:id="c6804f9f-5a45-4431-a22f-2cde1dc30fbd" />
     </flow>
     <flow name="get:\order:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="ea9f65bc-d887-4afe-9832-afab84b8dbd1" name="getOrder" />
+		<logger level="INFO" doc:name="Logger" doc:id="6aeb10a8-cda2-4183-ab39-4ca555f4bb1f" />
     </flow>
     <flow name="get:\wishlist:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="631196ce-d778-4c17-b26a-cd2c2aff996f" name="getWishlist" />
+		<logger level="INFO" doc:name="Logger" doc:id="60b251ac-ac86-4260-9ef6-88f4b9ea8357" />
     </flow>
     <flow name="get:\inventory\(item_id):ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="3d4b3ba7-c2a8-4c33-9fc8-2cf6f77e9dfe" name="getInventoryId" />
+		<logger level="INFO" doc:name="Logger" doc:id="d0cff6cc-28cb-42e0-90f5-e44561efbfac" />
     </flow>
     <flow name="get:\user\(user_id):ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="e1e42e42-f3da-4eca-828c-525096bc522d" name="getUserId" />
+		<logger level="INFO" doc:name="Logger" doc:id="78227e23-02ca-4d5f-ae13-a4e5e68052ba" />
     </flow>
     <flow name="post:\inventory:application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="926632db-345a-4c7b-b018-a11dd7c3faf9" name="postInventory" />
+		<logger level="INFO" doc:name="Logger" doc:id="aa087e18-0999-4607-9d9a-8be543769e1f" />
     </flow>
     <flow name="post:\order:application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="0895c39c-bc19-4dde-9069-0a29e65624e5" name="postOrder" />
+		<logger level="INFO" doc:name="Logger" doc:id="c013b4e5-b301-4333-a990-3e5e6bfa7db3" />
     </flow>
     <flow name="post:\user:application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="df13f6ad-2ca2-470e-ae62-6e11f045ee6e" name="postUser" />
+		<logger level="INFO" doc:name="Logger" doc:id="3acddc62-de1c-42d0-b0a5-a9a708d1e705" />
     </flow>
     <flow name="post:\wishlist:application\json:ecommerce-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="e49ab1dd-b0e5-4286-946e-ececbfe20a38" name="postWishlist" />
+		<logger level="INFO" doc:name="Logger" doc:id="ca0e4bea-976f-4b74-99e2-78fe9efcac03" />
     </flow>
 </mule>

@@ -180,6 +180,7 @@ output application/json
 		</ee:transform>
 	</flow>
 	<flow name="postPayment" doc:id="4903c4d7-250b-43d8-9f0e-e29570be847e" >
+		<http:listener doc:name="postpayment" doc:id="58845785-66b3-489c-98b9-0a68a028dc90" config-ref="HTTP_Listener_config" path="/postpayment"/>
 		<ee:transform doc:name="Transform Message" doc:id="68b65fe3-2bee-4e96-bdb1-6fd93a3553c1" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -190,6 +191,7 @@ output application/java
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="fe3668fb-9ae2-410c-b7c9-3e1bd3ca3f0d" />
 	</flow>
 	<flow name="putUser" doc:id="7c78148a-962c-4f7f-a0c0-23225b40b1a8" >
 		<ee:transform doc:name="Transform Message" doc:id="7149c8b9-79f9-4c21-9fae-6eec53678c05" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
