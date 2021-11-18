@@ -1,9 +1,0 @@
-%dw 2.0
-
-type auto_917efbcb_3b35_4d2e_a90d_c738fcb8b4db_Input_Payload = {
-  user_id: String, 
-  order_id: Number, 
-  items: Array<{    quantity: Number,     item_id: String,     price: Number,     _?: Any  }>, 
-  _?: Any
-}
-
