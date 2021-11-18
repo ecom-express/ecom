@@ -38,6 +38,19 @@
 							<artifactId>mysql-connector-java</artifactId>
 						</sharedLibrary>
 					</sharedLibraries>
+					<cloudHubDeployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>4.3.0</muleVersion>
+						<username>ecom_express</username>
+						<password>Ecom@batch10</password>
+						<workers>1</workers>
+						<workerType>MICRO</workerType>
+						<region>us-east-2</region>
+						<environment>Sandbox</environment>
+						<applicationName>ecom</applicationName>
+						<objectStoreV2>true</objectStoreV2>
+					</cloudHubDeployment>
+					
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
@@ -104,11 +117,7 @@
 			<version>1.10.4</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-		<dependency>
-			<groupId>com.mycompany</groupId>
-			<artifactId>ojdbc8</artifactId>
-			<version>0.1</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
