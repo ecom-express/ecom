@@ -32,10 +32,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<sharedLibraries>
-						<sharedLibrary>
-							<groupId>com.mycompany</groupId>
-							<artifactId>ojdbc8</artifactId>
-						</sharedLibrary>
+
 						<sharedLibrary>
 							<groupId>mysql</groupId>
 							<artifactId>mysql-connector-java</artifactId>
