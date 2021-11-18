@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="Event_And_Integration_API-suite.xml" />
+	<munit:test name="EventAPI-test" doc:id="a33db693-4fd9-4933-b94c-10fafa899c0c" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock getWishlistdata" doc:id="a03d043f-2df6-49c9-a723-b3317841cb25" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="20d9918a-849d-422b-9e97-614ff617f3e4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://EventAPItest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="1477b7c1-91a7-460b-9259-b2613d31576b" >
+				<munit:payload value="#[readUrl('classpath://EventAPItest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://EventAPItest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to EventAPI" doc:id="0132617a-3b74-4e53-a668-d1d43053ee0c" name="EventAPI"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="bc161be2-9902-4f22-87bb-12b01b4ad068" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import EventAPItest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference_priceAPI" doc:id="07e79de5-84a0-45dd-9cea-58f42c1f7ba5" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2aa3cc10-7267-44f4-a76b-21eaacfd666d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Flow Reference_quantityAPI" doc:id="ac4f4f7d-01bd-4b4b-b405-da7da0347b51" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8d7bd0f1-72a0-413d-aa0f-dadb5d244d6d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="a19f1deb-8e3a-4b05-92bd-f9d8e6507ac6" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="90ff1e44-48ec-4ccf-9840-1b12a94e4865" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="AWStoDB-test" doc:id="c231fda2-e478-4807-a6dd-d2a33d53ad85" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Get AWS inventory object" doc:id="613f7f52-d475-4502-97bf-625591198fad" processor="s3:get-object">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="282aaaf2-8045-489d-93b8-d0fd84d8d958" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output text/csv --- readUrl('classpath://AWStoDBtest\mock_payload.dwl')]" mediaType="text/csv" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://AWStoDBtest\mock_attributes.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="8566ff76-35e2-4994-baf6-59e0cde7351b" >
+				<munit:payload value="#[readUrl('classpath://AWStoDBtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://AWStoDBtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to AWStoDB" doc:id="da312e70-5567-48cc-8110-0a0e0bd4553e" name="AWStoDB"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7c6442ba-627b-425e-8ffc-57667c04d29d" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import AWStoDBtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="41a33ba3-1fed-47b6-95b0-410eb63bad54" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b86729ad-7d89-4515-945c-a3106eccb388" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify OracleBatch_Job" doc:id="30aec71c-3904-4a00-9ced-35d33402b692" processor="batch:job" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5551d4ca-e174-4ea9-bc67-c2d11a925e3d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="8f397028-0912-404c-9a70-a646e2ac1018" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47b07951-1a08-4a3f-82c8-03a2c2f12ec3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

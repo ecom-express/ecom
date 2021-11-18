@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="interface-suite.xml" />
+	<munit:test name="get:\inventory:ecommerce-api-config-test" doc:id="bc404107-1671-402d-9003-bc8227722bd7" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="a2a79d4d-ac1e-4d25-9d95-4778fe019337" >
+				<munit:payload value="#[readUrl('classpath://getinventoryecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getinventoryecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getinventoryecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\inventory:ecommerce-api-config" doc:id="f5e0f3bc-2396-47a0-8d26-87190cbfeb5f" name="get:\inventory:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="19f03e32-cd0a-448f-a1d8-8471933ac0a5" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getinventoryecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="bdc49441-c19e-4fc1-9928-ef4f8fcc02a7" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d88430bc-bdfb-4827-82dd-6e965f4eb7a0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\wishlist:ecommerce-api-config-test" doc:id="1e9c4297-f6f5-481a-92fb-e03573cbb1fc" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="679cb284-4f7e-42ea-9f3f-1e84895ac903" >
+				<munit:payload value="#[readUrl('classpath://getwishlistecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getwishlistecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getwishlistecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\wishlist:ecommerce-api-config" doc:id="cf4937df-88c2-4e7e-b074-ee5e9fdf8488" name="get:\wishlist:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="201a94ca-1483-4b6d-8c5d-41700d7ad9dd" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getwishlistecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="748d64a8-5d7c-4d1c-9f2e-6a06187ee587" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="09dcb3bb-9e95-4aca-ab0e-ed70bbe435f3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\order:ecommerce-api-config-test" doc:id="29678b9c-a964-437b-aea4-a802ee330df7" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="785146f5-4096-4061-b7f2-b7a283640bc5" >
+				<munit:payload value="#[readUrl('classpath://getorderecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getorderecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getorderecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\order:ecommerce-api-config" doc:id="e333a66c-be03-4d59-92f8-b08a51e924cf" name="get:\order:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="fe0f22b0-3e1c-4164-afd6-dc43cf3610ab" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getorderecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="994f8476-9bf5-44f4-90ba-1599d3204224" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2d026cca-c0e7-4fc3-9ed9-652890aba450" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\inventory\(item_id):ecommerce-api-config-test" doc:id="1babf99b-efcc-49d6-bcfa-aec0176f5c3a" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="04f631e2-5e62-48bf-9456-9ab68918d19c" >
+				<munit:payload value="#[readUrl('classpath://getinventoryitemidecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getinventoryitemidecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getinventoryitemidecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\inventory\(item_id):ecommerce-api-config" doc:id="c0c25efd-2223-4449-988d-c2f742a9317c" name="get:\inventory\(item_id):ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7eb62119-e344-4163-9055-f89fba2e786c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getinventoryitemidecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="90da5bc8-484c-4780-ad73-58fded644531" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="83c51e3f-f0e9-4e9a-bec8-e36ce3cd3ef2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\user\(user_id):ecommerce-api-config-test" doc:id="61011cc0-7f95-4c10-b2f5-50d27c7a4455" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="e46eec34-477c-47ce-b5da-19a7dd167ad7" >
+				<munit:payload value="#[readUrl('classpath://getuseruseridecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getuseruseridecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getuseruseridecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\user\(user_id):ecommerce-api-config" doc:id="e28ceb8d-8e2f-4211-b979-a67403e3c3a0" name="get:\user\(user_id):ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="70b46a50-aae6-4f18-adcd-2204fba0041d" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getuseruseridecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="388106c6-482b-4549-a407-ae3ce029acda" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e612bb30-3608-42d5-a4fd-563f37fca813" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\order:application\json:ecommerce-api-config-test" doc:id="342b099b-c86d-437d-892b-716129dbda3f" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="0a788e94-56d9-4983-8952-4204305ecc0a" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postorderapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postorderapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postorderapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\order:application\json:ecommerce-api-config" doc:id="f7904984-ea5b-4057-8ef4-4f8288d27af1" name="post:\order:application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="8b7be055-e47d-47b7-a7a2-139acebd3442" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postorderapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="4f81c29d-7078-4ad7-a2ab-ecacb2c2d252" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ed0914b9-b4fb-4269-b85f-70cbec634a5c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\user:application\json:ecommerce-api-config-test" doc:id="8a3e1a3a-0333-4dc1-8459-d45c7ec0cd1e" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="24de59e4-890c-4df6-beae-59199e5cfb67" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postuserapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postuserapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postuserapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\user:application\json:ecommerce-api-config" doc:id="95d07198-2e48-4b07-83c0-4a8ea2a0528f" name="post:\user:application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="d549a5e5-1a4b-4a54-a636-14cb3ff66d0c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postuserapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="8751ab9e-054c-44cb-95b4-7de37e6da4bd" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="cdbc9bb5-b932-40c4-84c3-b7f9c41c9a54" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\wishlist:application\json:ecommerce-api-config-test" doc:id="14955307-79da-491b-baff-679e05893f6d" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="093bbbd6-5789-4a5e-86e0-656fe69dfe7d" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postwishlistapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postwishlistapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postwishlistapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\wishlist:application\json:ecommerce-api-config" doc:id="b42e8f48-aace-416e-a59f-23bf880f16ea" name="post:\wishlist:application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="0689e85a-ab7d-46e3-8fde-b1575223d4ea" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postwishlistapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="329b99d6-ad0d-431e-a5e1-5f472aa3824b" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="62bee708-c520-47e9-abcd-fddcb3038765" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\inventory:application\json:ecommerce-api-config-test" doc:id="adc5f501-f31f-4bba-b9fe-972531f616f1" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="e3f227be-9dc7-4899-ad14-795e565bb4a1" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postinventoryapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://postinventoryapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postinventoryapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\inventory:application\json:ecommerce-api-config" doc:id="1aa3d12c-34db-4722-9a5b-f1f394298e22" name="post:\inventory:application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="aed267ff-a63c-4e2b-8f1f-a7a317e546b6" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postinventoryapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="e71b07b6-6719-46a8-b9a7-28a60ecdcef1" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fd866178-86a7-48b5-a5ce-ebc2a426ce83" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\user:application\json:ecommerce-api-config-test" doc:id="e076defc-68a6-4bc3-93be-df9ad15fea0f" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="dcfc41b0-8459-4edc-9a95-3a5a04b796f6" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putuserapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putuserapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putuserapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\user:application\json:ecommerce-api-config" doc:id="c2154823-d893-4315-a286-220a0f95bb45" name="put:\user:application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="1ee17bd9-4c29-4878-93b9-3769eec4b4f3" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putuserapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="94e9d994-3701-4fa9-acf5-06e3d0e81f6d" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ecc85247-29cc-4acd-a4a5-73c1360ca2a5" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\order\(order_id):application\json:ecommerce-api-config-test" doc:id="ed170510-a161-4a0f-a998-af7eaafb009a" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="c0e5a829-1236-4e84-9e54-49a551604b0a" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putorderorderidapplicationjsonecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putorderorderidapplicationjsonecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putorderorderidapplicationjsonecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\order\(order_id):application\json:ecommerce-api-config" doc:id="ed3b1e31-3b54-4d3b-b255-ee0b9dbc5d14" name="put:\order\(order_id):application\json:ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="235fdee0-a33d-4dd6-991e-9f7c18a43722" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putorderorderidapplicationjsonecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="4f754119-5d7f-4ce8-af9f-990e20d33e98" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ff02108f-9bf2-4dcf-ba4b-22c962109f5b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete:\user\(user_id):ecommerce-api-config-test" doc:id="fc56af39-bca6-4c33-8bbe-c92a025977b2" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="28808287-04fb-413b-b64a-e9fd89f1ce52" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://deleteuseruseridecommerceapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://deleteuseruseridecommerceapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://deleteuseruseridecommerceapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\user\(user_id):ecommerce-api-config" doc:id="da8a0692-608d-42ea-80a0-c08c226a7976" name="delete:\user\(user_id):ecommerce-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="72efb3f5-8a2b-4eb4-81c7-97559181891c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteuseruseridecommerceapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Logger" doc:id="1b425c57-6cd7-4f63-ab34-16d8cb733b24" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f09a40ad-3b4f-4d2c-8567-671b7ff1eaa6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
