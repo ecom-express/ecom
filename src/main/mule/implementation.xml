@@ -70,7 +70,7 @@ output application/json
 	<flow name="getWishlist" doc:id="df162fc4-0e0d-4af8-ab8c-ad99e9ffad1c" >
 		<set-variable value="#[message.attributes.queryParams.item_id]" doc:name="Set Variable" doc:id="83481ca6-a88c-4915-804d-73e35f49bed4" variableName="id" />
 		<db:select doc:name="Select" doc:id="ed239e34-9b5b-4cbd-9552-e17eed39d695" config-ref="Database_Config" >
-			<db:sql ><![CDATA[SELECT * FROM wishlistget WHERE itemId = :itemid]]></db:sql>
+			<db:sql ><![CDATA[SELECT * FROM wishlist WHERE itemId = :itemid]]></db:sql>
 			<db:input-parameters ><![CDATA[#[output application/json
 ---
 {

@@ -15,10 +15,10 @@ Email:
   
 DB:
   host : "sql6.freemysqlhosting.net"
-  username : "sql6450988"
+  username : "sql6452759"
   port : "3306"
-  password : "nqMWmzP1IM"
-  database : "sql6450988"
+  password : "JC12vdYHte"
+  database : "sql6452759"
   
 http:
   host : "0.0.0.0"
